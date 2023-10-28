@@ -6,8 +6,8 @@ settings:
 
 devDependencies:
   '@aiou/eslint-config':
-    specifier: 1.0.1
-    version: 1.0.1(eslint@8.52.0)(tailwindcss@3.3.5)(typescript@4.6.4)
+    specifier: 1.0.2
+    version: 1.0.2(eslint@8.52.0)(tailwindcss@3.3.5)(typescript@4.6.4)
   '@changesets/cli':
     specifier: ^2.26.0
     version: 2.26.0
@@ -34,8 +34,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /@aiou/eslint-config@1.0.1(eslint@8.52.0)(tailwindcss@3.3.5)(typescript@4.6.4):
-    resolution: {integrity: sha512-oapyrtvdYh0xfeB/sAYYY5K/5kq7wz4r8Z7x2i/E86eb+X1LtAEXaUjV8VgsqNDcTPkw2UlIauH+Dr+VJq/04g==}
+  /@aiou/eslint-config@1.0.2(eslint@8.52.0)(tailwindcss@3.3.5)(typescript@4.6.4):
+    resolution: {integrity: sha512-YB4AizSghzIrDOqj5bj7qXbphue7eS9im0LgHgZisns4h10IpZ2gmhoafWsc8oNHuKuV9DBXr71BC6C3QV66gQ==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: '>=7.4.0 || ^8'
