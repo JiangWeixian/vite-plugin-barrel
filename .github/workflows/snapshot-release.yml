@@ -2,12 +2,12 @@ name: Snapshot-Release
 on:
   push:
     paths:
-      - '.changeset/**'
+      - ".changeset/**"
     branches:
       - snapshot
   pull_request:
     paths:
-      - '.changeset/**'
+      - ".changeset/**"
     branches:
       - master
 
