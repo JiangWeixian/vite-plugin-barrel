@@ -1,14 +1,31 @@
 {
-    "name": "swc-plugin-barrel",
-    "version": "0.1.0",
-    "description": "",
-    "author": "",
-    "license": "ISC",
-    "keywords": ["swc-plugin"],
-    "main": "swc_plugin_barrel.wasm",
-    "scripts": {
-        "build": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/swc_plugin_barrel.wasm ."
-    },
-    "files": ["swc_plugin_barrel.wasm"],
-    "preferUnplugged": true
+  "name": "swc-plugin-barrel",
+  "version": "0.1.0",
+  "description": "",
+  "keywords": ["swc-plugin"],
+  "license": "ISC",
+  "author": "",
+  "files": ["swc_plugin_barrel.wasm"],
+  "main": "swc_plugin_barrel.wasm",
+  "scripts": {
+    "build": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/swc_plugin_barrel.wasm .",
+    "ci:version": "pnpm changeset version",
+    "ci:publish": "pnpm run build && pnpm changeset publish",
+    "ci:snapshot": "pnpm changeset version --snapshot beta",
+    "ci:prerelease": "pnpm run build && pnpm changeset publish --tag beta",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
+  },
+  "preferUnplugged": true,
+  "lint-staged": {
+    "**/**/*.{js,ts,tsx,vue,json,yml,yaml}": ["eslint --fix"]
+  },
+  "devDependencies": {
+    "@aiou/eslint-config": "1.0.1",
+    "@changesets/cli": "^2.26.0",
+    "eslint": "8.52.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "typescript": "^4.6.4"
+  }
 }
