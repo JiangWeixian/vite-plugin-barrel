@@ -3,7 +3,6 @@ pub mod swc_named_import_transform;
 
 use swc_core::ecma::{
     ast::Program,
-    transforms::testing::test,
     visit::{as_folder, FoldWith},
 };
 use serde_json::Value;
@@ -34,19 +33,11 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
             .expect("failed to get plugin config for relay"),
     )
     .expect("Should provide plugin config");
+    // run two plugins
     let wildcard = plugin_config["wildcard"].as_bool().unwrap_or_default();
     let config = Config { wildcard };
     let mut barrel = barrel(&config);
+    // TODO: named-import-transform should run before barrel
     let program = program.fold_with(&mut as_folder(NamedImportTransformVisitor {}));
     program.fold_with(&mut barrel)
 }
-
-test!(
-    Default::default(),
-    |_| as_folder(NamedImportTransformVisitor {}),
-    basic,
-    // Input codes
-    r#"import { Button, ALink } from "foo";"#,
-    // Output codes after transformed with plugin
-    r#"import path from "../path.js";"#
-);

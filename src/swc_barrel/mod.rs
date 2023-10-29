@@ -307,8 +307,6 @@ impl Fold for Barrel {
             })),
         })));
 
-        println!("local_idents: {:?}, export_map: {:?}, export_wildcards: {:?}, is_barrel: {:?}", local_idents, export_map, export_wildcards, is_barrel);
-
         // Push "export *" statements for each wildcard export.
         for src in export_wildcards {
             new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportAll(ExportAll {
@@ -324,7 +322,6 @@ impl Fold for Barrel {
             })));
         }
     }
-    println!("new_items: {:?}", new_items);
     new_items
   }
 }

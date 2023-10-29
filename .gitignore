@@ -177,3 +177,4 @@ dist
 
 # Build
 *.wasm
+.swc
