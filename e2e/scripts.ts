@@ -9,6 +9,10 @@ const main = async () => {
   const content = `
 import { Button, ALink } from "foo";
 
+const Card = () => {
+  return <Button />
+}
+
 import { z } from './3'
 
 export { foo, b as y } from './1'
@@ -23,7 +27,7 @@ export { z }
       },
       experimental: {
         plugins: [
-          [pluginPath, {}],
+          [pluginPath, { packages: ['foo'] }],
         ],
       },
     },
