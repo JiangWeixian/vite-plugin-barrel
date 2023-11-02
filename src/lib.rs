@@ -1,14 +1,21 @@
 pub mod swc_barrel;
 pub mod swc_named_import_transform;
 
+use std::path::PathBuf;
 use serde::Deserialize;
 use swc_core::ecma::{
     ast::Program,
     visit::{as_folder, FoldWith},
 };
-use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
+use swc_core::common::FileName;
+use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata, metadata::TransformPluginMetadataContextKind};
 use swc_barrel::{barrel, Config as BarrelConfig};
-use swc_named_import_transform::{named_import_transform, Config as NamedImportTransformConfig};
+// use swc_named_import_transform::{named_import_transform, Config as NamedImportTransformConfig};
+use swc_named_import_transform::{transform_imports, Config as NamedImportTransformConfig};
+
+fn default_plugin_barrel() -> bool {
+    false
+}
 
 fn default_wildcard() -> bool {
     false
@@ -20,6 +27,8 @@ fn default_packages() -> Vec<String> {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
+    #[serde(default = "default_plugin_barrel")]
+    pub enable_plugin_barrel: bool,
     #[serde(default = "default_wildcard")]
     pub wildcard: bool,
     #[serde(default = "default_packages")]
@@ -43,6 +52,14 @@ pub struct Config {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+    let filename = if let Some(filename) =
+        metadata.get_context(&TransformPluginMetadataContextKind::Filename)
+    {
+        FileName::Real(PathBuf::from(filename))
+    } else {
+        FileName::Anon
+    };
+    println!("filename: {:?}", filename);
     let plugin_config = serde_json::from_str::<Config>(
         &metadata
             .get_transform_plugin_config()
@@ -52,14 +69,20 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     // run two plugins
     let wildcard = plugin_config.wildcard;
     let packages = plugin_config.packages;
-    println!("{:?}", packages);
+    let enable_plugin_barrel = plugin_config.enable_plugin_barrel;
     let barrel_config = BarrelConfig { wildcard };
     let mut barrel = barrel(&barrel_config);
     let named_config = NamedImportTransformConfig { packages };
-    let named_import_transform = named_import_transform(named_config);
-    // TODO: named-import-transform should run before barrel
-    let program = program.fold_with(&mut as_folder(named_import_transform));
-    program.fold_with(&mut barrel)
+    // TODO: split it into two plugins
+    // let named_import_transform = named_import_transform(named_config);
+    // let program = program.fold_with(&mut as_folder(named_import_transform));
+    let mut named_import_transform = transform_imports(named_config);
+    let program = program.fold_with(&mut named_import_transform);
+    if enable_plugin_barrel == true {
+        program.fold_with(&mut barrel)
+    } else {
+        program
+    }
     // Run named plugin only
     // program.fold_with(&mut as_folder(named_import_transform))
 }
