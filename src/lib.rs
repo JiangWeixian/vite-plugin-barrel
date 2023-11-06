@@ -1,19 +1,23 @@
 pub mod swc_barrel;
 pub mod swc_named_import_transform;
+pub mod swc_relative_import_transform;
 
-use std::path::PathBuf;
 use serde::Deserialize;
+use std::path::*;
+use swc_barrel::{barrel, Config as BarrelConfig};
+use swc_core::common::FileName;
 use swc_core::ecma::{
     ast::Program,
-    visit::{as_folder, FoldWith},
+    visit::FoldWith,
 };
-use swc_core::common::FileName;
-use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata, metadata::TransformPluginMetadataContextKind};
-use swc_barrel::{barrel, Config as BarrelConfig};
-// use swc_named_import_transform::{named_import_transform, Config as NamedImportTransformConfig};
-use swc_named_import_transform::{transform_imports, Config as NamedImportTransformConfig};
+use swc_core::plugin::{
+    metadata::TransformPluginMetadataContextKind, plugin_transform,
+    proxies::TransformPluginProgramMetadata,
+};
+use swc_named_import_transform::{named_import_transform, Config as NamedImportTransformConfig};
+use swc_relative_import_transform::{relative_import_transform, Config as RelativeImportTransformConfig};
 
-fn default_plugin_barrel() -> bool {
+fn default_plugin_flag() -> bool {
     false
 }
 
@@ -27,12 +31,14 @@ fn default_packages() -> Vec<String> {
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
-    #[serde(default = "default_plugin_barrel")]
+    #[serde(default = "default_plugin_flag")]
+    pub enable_plugin_relative_import_transform: bool,
+    #[serde(default = "default_plugin_flag")]
     pub enable_plugin_barrel: bool,
     #[serde(default = "default_wildcard")]
     pub wildcard: bool,
     #[serde(default = "default_packages")]
-    pub packages: Vec<String>
+    pub packages: Vec<String>,
 }
 
 /// An example plugin function with macro support.
@@ -52,14 +58,14 @@ pub struct Config {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let filename = if let Some(filename) =
+    let filename: FileName = if let Some(filename) =
         metadata.get_context(&TransformPluginMetadataContextKind::Filename)
     {
         FileName::Real(PathBuf::from(filename))
     } else {
         FileName::Anon
     };
-    println!("filename: {:?}", filename);
+    // println!("filename: {:?}", filename);
     let plugin_config = serde_json::from_str::<Config>(
         &metadata
             .get_transform_plugin_config()
@@ -70,14 +76,21 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     let wildcard = plugin_config.wildcard;
     let packages = plugin_config.packages;
     let enable_plugin_barrel = plugin_config.enable_plugin_barrel;
-    let barrel_config = BarrelConfig { wildcard };
-    let mut barrel = barrel(&barrel_config);
-    let named_config = NamedImportTransformConfig { packages };
+    let enable_plugin_relative_import_transform = plugin_config.enable_plugin_relative_import_transform;
     // TODO: split it into two plugins
     // let named_import_transform = named_import_transform(named_config);
     // let program = program.fold_with(&mut as_folder(named_import_transform));
-    let mut named_import_transform = transform_imports(named_config);
+    // plugin-relative
+    let relative_config: RelativeImportTransformConfig = RelativeImportTransformConfig { enable: enable_plugin_relative_import_transform };
+    let mut relative_import_transform = relative_import_transform(&relative_config);
+    let program: Program = program.fold_with(&mut relative_import_transform);
+    // plugin-named
+    let named_config = NamedImportTransformConfig { packages };
+    let mut named_import_transform = named_import_transform(named_config);
     let program = program.fold_with(&mut named_import_transform);
+    // plugin-barrel
+    let barrel_config = BarrelConfig { wildcard };
+    let mut barrel = barrel(&barrel_config);
     if enable_plugin_barrel == true {
         program.fold_with(&mut barrel)
     } else {
