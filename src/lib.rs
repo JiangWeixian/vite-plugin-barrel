@@ -87,6 +87,4 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     } else {
         program
     }
-    // Run named plugin only
-    // program.fold_with(&mut as_folder(named_import_transform))
 }
