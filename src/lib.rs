@@ -3,15 +3,13 @@ pub mod swc_named_import_transform;
 pub mod swc_relative_import_transform;
 
 use serde::Deserialize;
-use std::path::*;
 use swc_barrel::{barrel, Config as BarrelConfig};
-use swc_core::common::FileName;
 use swc_core::ecma::{
     ast::Program,
     visit::FoldWith,
 };
 use swc_core::plugin::{
-    metadata::TransformPluginMetadataContextKind, plugin_transform,
+    plugin_transform,
     proxies::TransformPluginProgramMetadata,
 };
 use swc_named_import_transform::{named_import_transform, Config as NamedImportTransformConfig};
@@ -58,13 +56,6 @@ pub struct Config {
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
 pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let filename: FileName = if let Some(filename) =
-        metadata.get_context(&TransformPluginMetadataContextKind::Filename)
-    {
-        FileName::Real(PathBuf::from(filename))
-    } else {
-        FileName::Anon
-    };
     // println!("filename: {:?}", filename);
     let plugin_config = serde_json::from_str::<Config>(
         &metadata
@@ -91,7 +82,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
     // plugin-barrel
     let barrel_config = BarrelConfig { wildcard };
     let mut barrel = barrel(&barrel_config);
-    if enable_plugin_barrel == true {
+    if enable_plugin_barrel {
         program.fold_with(&mut barrel)
     } else {
         program

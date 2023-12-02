@@ -33,7 +33,7 @@ impl Fold for NamedImportTransform {
                                             ModuleExportName::Ident(ident) => {
                                                 let new_src = format!(
                                                     "__barrel_optimize__?names={}!=!{}",
-                                                    ident.sym.to_string(),
+                                                    ident.sym,
                                                     src_value
                                                 );
                                                 let specifiers =
@@ -56,7 +56,7 @@ impl Fold for NamedImportTransform {
                                             ModuleExportName::Str(str_) => {
                                                 let new_src = format!(
                                                     "__barrel_optimize__?names={}!=!{}",
-                                                    str_.value.to_string(),
+                                                    str_.value,
                                                     src_value
                                                 );
                                                 let specifiers =
@@ -80,7 +80,7 @@ impl Fold for NamedImportTransform {
                                     } else {
                                         let new_src = format!(
                                             "__barrel_optimize__?names={}!=!{}",
-                                            specifier.local.sym.to_string(),
+                                            specifier.local.sym,
                                             src_value
                                         );
                                         let specifiers = ImportSpecifier::Named(specifier.clone());

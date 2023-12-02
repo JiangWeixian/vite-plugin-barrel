@@ -31,7 +31,7 @@ impl Fold for RelativeImportTransform {
 
                     // transform relative imports and without ext
                     // import { x } from "./foo" not import { x } from "./foo.css"
-                    if src_value.starts_with(".") && !ext.is_some() && self.enable {
+                    if src_value.starts_with('.') && ext.is_none() && self.enable {
                         for specifier in &decl.specifiers {
                             match specifier {
                                 ImportSpecifier::Named(specifier) => {
@@ -41,7 +41,7 @@ impl Fold for RelativeImportTransform {
                                             ModuleExportName::Ident(ident) => {
                                                 let new_src = format!(
                                                     "__barrel_optimize__?names={}!=!{}",
-                                                    ident.sym.to_string(),
+                                                    ident.sym,
                                                     src_value
                                                 );
                                                 let specifiers =
@@ -64,7 +64,7 @@ impl Fold for RelativeImportTransform {
                                             ModuleExportName::Str(str_) => {
                                                 let new_src = format!(
                                                     "__barrel_optimize__?names={}!=!{}",
-                                                    str_.value.to_string(),
+                                                    str_.value,
                                                     src_value
                                                 );
                                                 let specifiers =
@@ -88,7 +88,7 @@ impl Fold for RelativeImportTransform {
                                     } else {
                                         let new_src = format!(
                                             "__barrel_optimize__?names={}!=!{}",
-                                            specifier.local.sym.to_string(),
+                                            specifier.local.sym,
                                             src_value
                                         );
                                         let specifiers = ImportSpecifier::Named(specifier.clone());
