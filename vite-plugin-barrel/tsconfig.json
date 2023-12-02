@@ -13,6 +13,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "noImplicitReturns": true,
+    "downlevelIteration": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "baseUrl": ".",

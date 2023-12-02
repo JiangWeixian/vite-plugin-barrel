@@ -317,7 +317,7 @@ impl Fold for Barrel {
                     span: DUMMY_SP,
                     src: Box::new(Str {
                         span: DUMMY_SP,
-                        value: format!("__barrel_optimize__?names=__PLACEHOLDER__!=!{}", src)
+                        value: format!("__barrel_optimize__?names=__PLACEHOLDER__&resourcePath={}", src)
                             .into(),
                         raw: None,
                     }),
