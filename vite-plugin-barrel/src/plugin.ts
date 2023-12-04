@@ -89,7 +89,6 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
     const source = await new Promise<string>((_resolve, reject) => {
       fs.readFile(file, (err: any, data: any) => {
         if (err || data === undefined) {
-          console.log(file)
           reject(err)
         } else {
           _resolve(data.toString())
@@ -121,7 +120,7 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
     // file itself.
     if (isWildcard) {
       for (const decl of exportList) {
-        decl[1] = decl[1] ? (await resolve(path.dirname(file), decl[1]))?.id ?? file : file
+        decl[1] = decl[1] ? (await resolve(decl[1], path.dirname(file)))?.id ?? file : file
         decl[2] = decl[2] || decl[0]
       }
     }
@@ -129,10 +128,16 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
       await Promise.all(
         wildcardExports.map(async (req) => {
           const resolvedIdResult = await resolve(
-            path.dirname(file),
             req.replace('__barrel_optimize__?names=__PLACEHOLDER__&resourcePath=', ''),
+            // path.dirname(file),
+            file,
           )
-          const targetPath = resolvedIdResult!.id
+          // FIXME:
+          const targetPath = cleanUrl(resolvedIdResult!.id)
+          console.log(
+            req.replace('__barrel_optimize__?names=__PLACEHOLDER__&resourcePath=', ''),
+            targetPath,
+          )
 
           const targetMatches = await getMatches(targetPath, true)
           if (targetMatches) {
@@ -189,14 +194,14 @@ export const barrel = (): Plugin[] => {
       },
       async load(id, options) {
         if (id.startsWith('__barrel_optimize__')) {
-          console.log(id)
           const params = parseUrl(id)
           const resolve = this.resolve.bind(this)
+          // FIXME:
           let resourcePath = params.resourcePath
           try {
             resourcePath = (await resolve(params.resourcePath))!.id
           } catch (e) {
-            console.log(resourcePath)
+            // console.log(resourcePath)
           }
           const mapping = await getMappings(cleanUrl(resourcePath), resolve, 'client')
           if (!mapping) {
@@ -241,7 +246,6 @@ export const barrel = (): Plugin[] => {
             }
           }
 
-          console.log(output)
           return output
         }
         return null
