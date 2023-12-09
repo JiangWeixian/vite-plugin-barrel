@@ -1,14 +1,14 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
-import path from 'node:path'
+import { dirname } from 'node:path'
 
 import { transform } from '@swc/core'
 
 import { NODE_MODULES_RE, SCRIPT_RE } from './constants'
-import { cleanUrl, parseUrl } from './utils'
+import { cleanUrl, isBarrelModule, parseUrl, resolver } from './utils'
 
 import type { Options as SwcConfig } from '@swc/core'
-import type { Plugin, PluginContainer } from 'vite'
+import type { Plugin } from 'vite'
 
 const name = 'vite-plugin-barrel'
 
@@ -16,13 +16,10 @@ const require = createRequire(import.meta.url)
 
 interface SwcPluginBarrelOptions {
   enable_plugin_relative_import_transform?: boolean
-  // TODO: remove this option
   enable_plugin_barrel?: boolean
   wildcard?: boolean
   packages?: string[]
 }
-
-const packages = ['@mui/material']
 
 const transformSWC = async (
   resourcePath: string,
@@ -39,6 +36,7 @@ const transformSWC = async (
   const config: SwcConfig = {
     sourceMaps: false,
     jsc: {
+      target: 'es2021',
       experimental: {
         plugins: [
           [
@@ -46,6 +44,13 @@ const transformSWC = async (
             resolvedPluginOptions,
           ],
         ],
+      },
+      transform: {
+        react: {
+          runtime: 'automatic',
+          refresh: false,
+          development: false,
+        },
       },
       parser: {
         syntax: isTypescript ? 'typescript' : 'ecmascript',
@@ -74,14 +79,13 @@ const barrelTransformMappingCache: {
   server: new Map(),
 }
 
-const getMappings = async (resourcePath: string, resolve: PluginContainer['resolveId'], name: 'client' | 'server') => {
+const getMappings = async (resourcePath: string, resolve: any, name: 'client' | 'server', options: Options) => {
   const transformMappingCache = barrelTransformMappingCache[name]
   if (transformMappingCache.has(resourcePath)) {
     return transformMappingCache.get(resourcePath)!
   }
   const visited = new Set<string>()
   const getMatches = async (file: string, isWildcard: boolean) => {
-    file = cleanUrl(file)
     if (visited.has(file)) {
       return null
     }
@@ -98,7 +102,7 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
     const { code: output } = await transformSWC(
       resourcePath,
       source,
-      { wildcard: isWildcard, enable_plugin_barrel: true, packages },
+      { wildcard: isWildcard, enable_plugin_barrel: true, packages: options.packages },
     )
     const matches = output.match(
       /^([\s\S]*)export (const|var) __next_private_exports_map__ = ('[^']+'|"[^"]+")/,
@@ -118,26 +122,18 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
     // In the wildcard case, if the value is exported from another file, we
     // redirect to that file (decl[0]). Otherwise, export from the current
     // file itself.
-    if (isWildcard) {
-      for (const decl of exportList) {
-        decl[1] = decl[1] ? (await resolve(decl[1], path.dirname(file)))?.id ?? file : file
-        decl[2] = decl[2] || decl[0]
-      }
+    for (const decl of exportList) {
+      decl[1] = decl[1] ? cleanUrl(await resolve(decl[1], dirname(file))) ?? file : file
+      decl[2] = decl[2] || decl[0]
     }
     if (wildcardExports.length) {
       await Promise.all(
         wildcardExports.map(async (req) => {
           const resolvedIdResult = await resolve(
             req.replace('__barrel_optimize__?names=__PLACEHOLDER__&resourcePath=', ''),
-            // path.dirname(file),
-            file,
+            dirname(file),
           )
-          // FIXME:
-          const targetPath = cleanUrl(resolvedIdResult!.id)
-          console.log(
-            req.replace('__barrel_optimize__?names=__PLACEHOLDER__&resourcePath=', ''),
-            targetPath,
-          )
+          const targetPath = cleanUrl(resolvedIdResult)
 
           const targetMatches = await getMatches(targetPath, true)
           if (targetMatches) {
@@ -159,16 +155,25 @@ const getMappings = async (resourcePath: string, resolve: PluginContainer['resol
   return res
 }
 
+interface Options extends Pick <SwcPluginBarrelOptions, 'packages'> {}
+
 /**
  * Vite plugin development docs
  * @see {@link https://vitejs.dev/guide/api-plugin.html}
  * Rollup lifetime hooks
  * @see {@link https://rollupjs.org/plugin-development/}
  */
-export const barrel = (): Plugin[] => {
+export const barrel = ({ packages = [] }: Options): Plugin[] => {
+  const viteConfig: {
+    root: string
+  } = {
+    root: process.cwd(),
+  }
   return [
     {
       name: `${name}:transform`,
+      apply: 'build',
+      enforce: 'pre',
       async transform(source, id) {
         const resolvedId = cleanUrl(id)
         const shouldTransformBarrel = SCRIPT_RE.test(resolvedId) && !NODE_MODULES_RE.test(resolvedId)
@@ -182,28 +187,33 @@ export const barrel = (): Plugin[] => {
         }
         return null
       },
-      enforce: 'pre',
     },
     {
       name: `${name}:barrel`,
-      resolveId(source, importer, options) {
-        if (source.startsWith('__barrel_optimize__')) {
-          return source
+      apply: 'build',
+      enforce: 'pre',
+      configResolved(config) {
+        viteConfig.root = config.root
+      },
+      async resolveId(source) {
+        if (isBarrelModule(source)) {
+          return `\0${source}`
         }
         return null
       },
       async load(id, options) {
-        if (id.startsWith('__barrel_optimize__')) {
+        // console.log('load', id)
+        if (isBarrelModule(id)) {
           const params = parseUrl(id)
-          const resolve = this.resolve.bind(this)
-          // FIXME:
-          let resourcePath = params.resourcePath
-          try {
-            resourcePath = (await resolve(params.resourcePath))!.id
-          } catch (e) {
-            // console.log(resourcePath)
-          }
-          const mapping = await getMappings(cleanUrl(resourcePath), resolve, 'client')
+          const resourcePath = await resolver(params.resourcePath, viteConfig.root)
+          console.log('load barrel', resourcePath)
+          const bundler = options?.ssr ? 'server' : 'client'
+          const mapping = await getMappings(
+            cleanUrl(resourcePath),
+            resolver,
+            bundler,
+            { packages },
+          )
           if (!mapping) {
             return `export * from "${resourcePath}"`
           }
@@ -246,11 +256,11 @@ export const barrel = (): Plugin[] => {
             }
           }
 
+          console.log(output)
           return output
         }
         return null
       },
-      enforce: 'pre',
     },
   ]
 }
