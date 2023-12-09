@@ -3,34 +3,28 @@
   "version": "0.0.0",
   "packageManager": "pnpm@8.6.12",
   "description": "",
-  "keywords": [
-    "swc-plugin"
-  ],
-  "license": "ISC",
+  "keywords": ["swc-plugin"],
+  "license": "MIT",
   "author": "JW",
-  "files": [
-    "swc_plugin_barrel.wasm"
-  ],
+  "files": ["swc_plugin_barrel.wasm"],
   "main": "swc_plugin_barrel.wasm",
   "scripts": {
     "test": "cargo test",
-    "e2e": "pnpm esno ./e2e/scripts.ts",
     "play": "pnpm --filter=./playgrounds/vite4-project run dev",
     "dev": "pnpm --filter=./vite-plugin-barrel run dev",
     "build:vite-plugin": "pnpm --filter=./vite-plugin-barrel run build",
-    "build": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/swc_plugin_barrel.wasm .",
+    "build:swc-plugin": "cargo build-wasi --release && cp ./target/wasm32-wasi/release/swc_plugin_barrel.wasm .",
+    "build": "run-s build:*",
     "ci:version": "pnpm changeset version",
     "ci:publish": "pnpm run build && pnpm changeset publish",
-    "ci:snapshot": "pnpm changeset version --snapshot beta",
+    "ci:snapshot": "pnpm changeset version --snapshot snapshot",
     "ci:prerelease": "pnpm run build && pnpm changeset publish --no-git-tag --snapshot",
     "lint:fix": "eslint . --fix",
     "prepare": "husky install"
   },
   "preferUnplugged": true,
   "lint-staged": {
-    "**/**/*.{js,ts,tsx,vue,json,yml,yaml}": [
-      "eslint --fix"
-    ]
+    "**/**/*.{js,ts,tsx,vue,json,yml,yaml}": ["eslint --fix"]
   },
   "devDependencies": {
     "@aiou/eslint-config": "1.1.0",
@@ -42,6 +36,7 @@
     "esno": "^0.17.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.0",
-    "typescript": "^4.6.4"
+    "npm-run-all": "^4.1.5",
+    "typescript": "5.2.2"
   }
 }

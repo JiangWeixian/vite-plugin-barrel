@@ -5,19 +5,23 @@
     "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "node",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "resolveJsonModule": true,
-    "strict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "declaration": true,
     "declarationDir": "dist",
+    "downlevelIteration": true,
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["dist"]
+  "include": ["src"]
 }
