@@ -8,10 +8,9 @@
 pnpm add vite-plugin-barrel
 ```
 
-## development
+## credits
 
-- **Setup** - `pnpm i`
-- **Build** - `pnpm build`
+next.js optimize_barrel
 
 # 
 <div align='right'>
