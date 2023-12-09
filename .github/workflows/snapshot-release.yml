@@ -14,7 +14,7 @@ on:
 env:
   CI: true
 jobs:
-  version:
+  snapshot-release:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
