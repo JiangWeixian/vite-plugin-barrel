@@ -1,20 +1,13 @@
-name: Snapshot-Release
+name: Release
 on:
   push:
-    paths:
-      - ".changeset/**"
-    branches:
-      - snapshot
-  pull_request:
-    paths:
-      - ".changeset/**"
     branches:
       - master
 
 env:
   CI: true
 jobs:
-  snapshot-release:
+  release:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
@@ -45,13 +38,6 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: install dependencies
         run: pnpm install --frozen-lockfile=false
-      - name: Creating .npmrc
-        run: |
-          cat << EOF > "$HOME/.npmrc"
-            //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          EOF
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -61,10 +47,12 @@ jobs:
         run: |
           rustup target add wasm32-wasi
       - name: create and publish versions
-        run: |
-          pnpm ci:snapshot
-          pnpm changeset pre enter snapshot
-          pnpm ci:prerelease
+        uses: changesets/action@v1
+        with:
+          version: pnpm ci:version
+          commit: "chore: update versions"
+          title: "chore: update versions"
+          publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,0 +1,4 @@
+packages:
+  - '.'
+  - './vite-plugin'
+  - './playgrounds/**'

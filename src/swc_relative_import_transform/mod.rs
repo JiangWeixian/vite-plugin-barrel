@@ -1,19 +1,21 @@
+use std::path::Path;
+
 use serde::Deserialize;
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::*;
-use swc_core::ecma::visit::{noop_fold_type, Fold};
+use swc_core::ecma::visit::{Fold, noop_fold_type};
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
-    pub packages: Vec<String>,
+    pub enable: bool,
 }
 
 #[derive(Debug, Default)]
-pub struct NamedImportTransform {
-    pub packages: Vec<String>,
+pub struct RelativeImportTransform {
+    pub enable: bool,
 }
 
-impl Fold for NamedImportTransform {
+impl Fold for RelativeImportTransform {
     noop_fold_type!();
 
     fn fold_module(&mut self, mut module: Module) -> Module {
@@ -23,7 +25,13 @@ impl Fold for NamedImportTransform {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
                     let src_value = decl.src.value.clone();
                     let mut skip_transform = false;
-                    if self.packages.iter().any(|p| src_value == *p) {
+
+                    let src_ref = &src_value.to_string();
+                    let ext = Path::new(src_ref).extension();
+
+                    // transform relative imports and without ext
+                    // import { x } from "./foo" not import { x } from "./foo.css"
+                    if src_value.starts_with('.') && ext.is_none() && self.enable {
                         for specifier in &decl.specifiers {
                             match specifier {
                                 ImportSpecifier::Named(specifier) => {
@@ -127,8 +135,7 @@ impl Fold for NamedImportTransform {
     }
 }
 
-pub fn named_import_transform(config: Config) -> impl Fold {
-    NamedImportTransform {
-        packages: config.packages,
-    }
+
+pub fn relative_import_transform(config: &Config) -> impl Fold {
+    RelativeImportTransform { enable: config.enable }
 }
