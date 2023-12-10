@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "homepage": "https://github.com/neo-hack/vite-plugin-template#readme",
   "repository": {

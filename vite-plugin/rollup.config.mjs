@@ -17,7 +17,7 @@ export default defineConfig([
     plugins: [
       externals({ devDeps: false }),
       esbuild({
-        target: 'es2020',
+        target: 'node18',
       }), // so Rollup can convert TypeScript to JavaScript
       alias({
         resolve: ['.ts', '.js', '.tsx', '.jsx'],
