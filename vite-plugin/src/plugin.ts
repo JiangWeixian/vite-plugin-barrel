@@ -5,7 +5,13 @@ import { dirname } from 'node:path'
 import { transform } from '@swc/core'
 
 import { NODE_MODULES_RE, SCRIPT_RE } from './constants'
-import { cleanUrl, isBarrelModule, parseUrl, resolver } from './utils'
+import {
+  cleanUrl,
+  debug,
+  isBarrelModule,
+  parseUrl,
+  resolver,
+} from './utils'
 
 import type { Options as SwcConfig } from '@swc/core'
 import type { Plugin } from 'vite'
@@ -202,11 +208,10 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
         return null
       },
       async load(id, options) {
-        // console.log('load', id)
         if (isBarrelModule(id)) {
           const params = parseUrl(id)
           const resourcePath = await resolver(params.resourcePath, viteConfig.root)
-          console.log('load barrel', resourcePath)
+          debug('load barrel %s', resourcePath)
           const bundler = options?.ssr ? 'server' : 'client'
           const mapping = await getMappings(
             cleanUrl(resourcePath),
@@ -256,7 +261,7 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
             }
           }
 
-          console.log(output)
+          debug('optimized barrel output %s', output)
           return output
         }
         return null

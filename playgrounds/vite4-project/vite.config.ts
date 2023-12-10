@@ -8,5 +8,8 @@ export default defineConfig({
     exclude: ['@mui/material', '@mui/icons-material'],
     force: true,
   },
-  plugins: [react(), barrel({ packages: ['@mui/material', '@mui/icons-material'] })],
+  plugins: [
+    react(),
+    process.env.ENABLE_BARREL && barrel({ packages: ['@mui/material', '@mui/icons-material'] }),
+  ].filter(Boolean),
 })

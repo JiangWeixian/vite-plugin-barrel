@@ -1,3 +1,4 @@
+import Debug from 'debug'
 import EnhancedResolve from 'enhanced-resolve'
 import { getQuery } from 'ufo'
 
@@ -38,3 +39,5 @@ export const resolver = async (id: string, context: string): Promise<string> => 
 export const isBarrelModule = (id: string) => {
   return BARREL_MODULE_RE.test(id)
 }
+
+export const debug = Debug('vite-plugin-barrel')
