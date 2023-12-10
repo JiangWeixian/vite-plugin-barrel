@@ -1,9 +1,6 @@
 name: Release
 on:
   push:
-  pull_request:
-    paths:
-      - ".changeset/**"
     branches:
       - master
 
