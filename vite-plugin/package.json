@@ -5,13 +5,13 @@
   "engines": {
     "node": ">=18"
   },
-  "homepage": "https://github.com/vite-plugin-barrel#readme",
+  "homepage": "https://github.com/JiangWeixian/vite-plugin-barrel#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vite-plugin-barrel.git"
+    "url": "git+https://github.com/JiangWeixian/vite-plugin-barrel.git"
   },
   "bugs": {
-    "url": "https://github.com/vite-plugin-barrel/issues",
+    "url": "https://github.com/JiangWeixian/vite-plugin-barrel/issues",
     "email": "jiangweixian1994@gmail.com"
   },
   "author": {
