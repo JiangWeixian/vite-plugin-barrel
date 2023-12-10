@@ -2,4 +2,4 @@
 "swc-plugin-barrel": patch
 ---
 
-release mvp
+enable barrel plugin on build mode
