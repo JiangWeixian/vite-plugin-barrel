@@ -1,5 +1,4 @@
 import EnhancedResolve from 'enhanced-resolve'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getQuery } from 'ufo'
 
 import { BARREL_MODULE_RE, POST_FIX_RE } from './constants'

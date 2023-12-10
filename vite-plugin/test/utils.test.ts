@@ -6,7 +6,7 @@ import { resolver } from '../src/utils'
 
 describe('resolver', () => {
   it('custom', async () => {
-    const root = path.resolve(expect.getState().testPath!, '../..')
+    const root = path.resolve(expect.getState().testPath!, '../../..')
     const playground = path.join(root, 'playgrounds/vite4-project')
     const result = await resolver('@mui/material', playground)
     expect(result).toBeDefined()

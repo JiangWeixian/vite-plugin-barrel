@@ -40,7 +40,7 @@ impl Fold for RelativeImportTransform {
                                         match imported {
                                             ModuleExportName::Ident(ident) => {
                                                 let new_src = format!(
-                                                    "__barrel_optimize__?names={}!=!{}",
+                                                    "__barrel_optimize__?names={}&resourcePath={}",
                                                     ident.sym,
                                                     src_value
                                                 );
@@ -63,7 +63,7 @@ impl Fold for RelativeImportTransform {
                                             }
                                             ModuleExportName::Str(str_) => {
                                                 let new_src = format!(
-                                                    "__barrel_optimize__?names={}!=!{}",
+                                                    "__barrel_optimize__?names={}&resourcePath={}",
                                                     str_.value,
                                                     src_value
                                                 );
@@ -87,7 +87,7 @@ impl Fold for RelativeImportTransform {
                                         }
                                     } else {
                                         let new_src = format!(
-                                            "__barrel_optimize__?names={}!=!{}",
+                                            "__barrel_optimize__?names={}&resourcePath={}",
                                             specifier.local.sym,
                                             src_value
                                         );
