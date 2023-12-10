@@ -19,17 +19,18 @@
     "email": "jiangweixian1994@gmail.com",
     "url": "https://twitter.com/jiangweixian"
   },
+  "files": ["dist"],
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/exports/index.d.ts"
     }
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/exports/index.d.ts",
   "scripts": {
     "build:lib": "rimraf dist && rollup -c --silent",
     "build:dts": "tsc -p ./tsconfig.dts.json",
@@ -57,7 +58,7 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "3.0.2",
     "rollup": "3.5.0",
-    "rollup-plugin-condition-exports": "2.0.0-next.1",
+    "rollup-plugin-condition-exports": "2.0.0-next.3",
     "rollup-plugin-esbuild": "^5.0.0",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-node-externals": "^5.0.2",
