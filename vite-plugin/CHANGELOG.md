@@ -1,5 +1,11 @@
 # vite-plugin-barrel
 
+## 0.1.0
+
+### Minor Changes
+
+- 98ca2af: fix wrong types define
+
 ## 0.0.2
 
 ### Patch Changes
