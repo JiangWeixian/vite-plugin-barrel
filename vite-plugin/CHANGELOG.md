@@ -1,5 +1,11 @@
 # vite-plugin-barrel
 
+## 0.1.1
+
+### Patch Changes
+
+- 4292953: generate sourcemap
+
 ## 0.1.0
 
 ### Minor Changes
