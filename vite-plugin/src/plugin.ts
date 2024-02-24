@@ -184,12 +184,15 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
         const resolvedId = cleanUrl(id)
         const shouldTransformBarrel = SCRIPT_RE.test(resolvedId) && !NODE_MODULES_RE.test(resolvedId)
         if (shouldTransformBarrel) {
-          const { code } = await transformSWC(
+          const { code, map } = await transformSWC(
             resolvedId,
             source,
             { enable_plugin_barrel: false, packages },
           )
-          return code
+          return {
+            code,
+            map,
+          }
         }
         return null
       },

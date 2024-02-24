@@ -137,8 +137,8 @@ importers:
         specifier: 3.5.0
         version: 3.5.0
       rollup-plugin-condition-exports:
-        specifier: 2.0.0-next.3
-        version: 2.0.0-next.3
+        specifier: 2.0.0-next.4
+        version: 2.0.0-next.4
       rollup-plugin-esbuild:
         specifier: ^5.0.0
         version: 5.0.0(esbuild@0.15.16)(rollup@3.5.0)
@@ -6496,8 +6496,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup-plugin-condition-exports@2.0.0-next.3:
-    resolution: {integrity: sha512-4CBx5XF8fWBJ7sazpbLTPe8Jew6pNqU+yXU2hDJiTfTgoJiYmHn4FliwfpcFJ7wCHAQF8Qr5pNNnWmdWwKMh+g==}
+  /rollup-plugin-condition-exports@2.0.0-next.4:
+    resolution: {integrity: sha512-yB5hBRw5769BalKvq1kdVkV0JvFr9RgsqrIu42VUjRn/KDJlnHVbLHt7lPS756yia+3mFRSYuA9Fkj27+EvIfA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@antfu/utils': 0.7.6
