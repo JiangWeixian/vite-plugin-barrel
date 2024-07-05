@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname } from 'node:path'
+import { performance } from 'node:perf_hooks'
 
 import { transform } from '@swc/core'
 
@@ -175,6 +176,10 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
   } = {
     root: process.cwd(),
   }
+  const benchmark = {
+    [`${name}:transform`]: 0,
+    [`${name}:barrel`]: 0,
+  }
   return [
     {
       name: `${name}:transform`,
@@ -182,19 +187,26 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
       enforce: 'pre',
       async transform(source, id) {
         const resolvedId = cleanUrl(id)
+        // TODO: mv to swc plugin
         const shouldTransformBarrel = SCRIPT_RE.test(resolvedId) && !NODE_MODULES_RE.test(resolvedId)
         if (shouldTransformBarrel) {
+          const now = performance.now()
           const { code, map } = await transformSWC(
             resolvedId,
             source,
             { enable_plugin_barrel: false, packages },
           )
+          const took = performance.now() - now
+          benchmark[`${name}:transform`] += took
           return {
             code,
             map,
           }
         }
         return null
+      },
+      buildEnd() {
+        debug(`plugin ${`${name}:transform`} took ${benchmark[`${name}:transform`]}ms`)
       },
     },
     {
@@ -212,6 +224,7 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
       },
       async load(id, options) {
         if (isBarrelModule(id)) {
+          const now = performance.now()
           const params = parseUrl(id)
           const resourcePath = await resolver(params.resourcePath, viteConfig.root)
           debug('load barrel %s', resourcePath)
@@ -265,9 +278,14 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
           }
 
           debug('optimized barrel output %s', output)
+          const took = performance.now() - now
+          benchmark[`${name}:barrel`] += took
           return output
         }
         return null
+      },
+      buildEnd() {
+        debug(`plugin ${`${name}:barrel`} took ${benchmark[`${name}:barrel`]}ms`)
       },
     },
   ]
