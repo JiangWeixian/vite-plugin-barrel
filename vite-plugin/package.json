@@ -40,7 +40,7 @@
     "pretest": "pnpm run build"
   },
   "peerDependencies": {
-    "vite": "*"
+    "vite": "^5"
   },
   "dependencies": {
     "@swc/core": "1.6.7",
