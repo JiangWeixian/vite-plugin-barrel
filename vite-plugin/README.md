@@ -7,7 +7,7 @@
 
 Some packages exports lots of modules, it will cause vite transform lots of files in build step. For example, `@mui/icons-material` exports 1000+ components, it's harmful for vite build performance.
 
-![benchmark](https://github.com/JiangWeixian/repo-images/assets/6839576/9737eebb-0722-4d2f-a058-945141951891)
+![benchmark](https://github.com/JiangWeixian/repo-images/blob/master/barrel/barrel.png?raw=true)
 
 Test on `Apple M1 Pro`, with this plugin, it improve 50%+ build performance.
 

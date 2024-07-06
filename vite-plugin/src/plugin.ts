@@ -188,10 +188,10 @@ interface Options extends Pick <SwcPluginBarrelOptions, 'packages'> {
  */
 export const barrel = ({
   packages = [],
-  experimental = { integration: 'plugin-react-swc' },
+  experimental = {},
 }: Options = {
   packages: [],
-  experimental: { integration: 'plugin-react-swc' },
+  experimental: {},
 }): Plugin[] => {
   const viteConfig: {
     root: string
