@@ -34,6 +34,47 @@ export default defineConfig({
 })
 ```
 
+## options
+
+### `options.packages`
+
+- Type: `string[]`
+
+The packages you want to optimize.
+
+### `options.experimental.intergration`
+
+- Type: `plugin-react-swc`
+- Optional
+
+vite-plugin-barrel will use `@swc/core` to transform code with `swc-plugin-barrel`. You can pass this plugin directly to `@vitejs/plugin-react-swc` disable extra transform to improve performance.
+
+```ts
+// vite.config.ts
+import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite'
+import { barrel, swc_plugin_barrel } from 'vite-plugin-barrel'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    react({
+      plugins: [
+        swc_plugin_barrel({
+          packages: ['@mui/material', '@mui/icons-material']
+        })
+      ]
+    }),
+    barrel({
+      packages: ['@mui/material', '@mui/icons-material'],
+      experimental: {
+        intergration: 'plugin-react-swc'
+      }
+    }),
+  ],
+})
+```
+
 ## credits
 
 [next.js optimize_barrel](https://nextjs.org/docs/app/api-reference/next-config-js/optimizePackageImports)

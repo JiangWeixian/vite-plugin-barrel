@@ -28,6 +28,18 @@ interface SwcPluginBarrelOptions {
   packages?: string[]
 }
 
+export const swc_plugin_barrel = ({ packages }: Pick<SwcPluginBarrelOptions, 'packages'> = { packages: [] }) => {
+  return [
+    require.resolve('swc-plugin-barrel'),
+    {
+      enable_plugin_barrel: false,
+      enable_plugin_relative_import_transform: false,
+      wildcard: false,
+      packages: packages ?? [],
+    },
+  ]
+}
+
 const transformSWC = async (
   resourcePath: string,
   source: string,
@@ -162,7 +174,11 @@ const getMappings = async (resourcePath: string, resolve: any, name: 'client' | 
   return res
 }
 
-interface Options extends Pick <SwcPluginBarrelOptions, 'packages'> {}
+interface Options extends Pick <SwcPluginBarrelOptions, 'packages'> {
+  experimental?: {
+    integration?: 'plugin-react-swc'
+  }
+}
 
 /**
  * Vite plugin development docs
@@ -170,7 +186,13 @@ interface Options extends Pick <SwcPluginBarrelOptions, 'packages'> {}
  * Rollup lifetime hooks
  * @see {@link https://rollupjs.org/plugin-development/}
  */
-export const barrel = ({ packages = [] }: Options): Plugin[] => {
+export const barrel = ({
+  packages = [],
+  experimental = { integration: 'plugin-react-swc' },
+}: Options = {
+  packages: [],
+  experimental: { integration: 'plugin-react-swc' },
+}): Plugin[] => {
   const viteConfig: {
     root: string
   } = {
@@ -186,8 +208,10 @@ export const barrel = ({ packages = [] }: Options): Plugin[] => {
       apply: 'build',
       enforce: 'pre',
       async transform(source, id) {
+        if (experimental?.integration) {
+          return null
+        }
         const resolvedId = cleanUrl(id)
-        // TODO: mv to swc plugin
         const shouldTransformBarrel = SCRIPT_RE.test(resolvedId) && !NODE_MODULES_RE.test(resolvedId)
         if (shouldTransformBarrel) {
           const now = performance.now()

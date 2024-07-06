@@ -1,1 +1,1 @@
-export { barrel } from '../plugin'
+export { barrel, swc_plugin_barrel } from '../plugin'
