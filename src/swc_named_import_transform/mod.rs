@@ -48,6 +48,7 @@ impl Fold for NamedImportTransform {
                                                     type_only: false,
                                                     with: None,
                                                     specifiers: vec![specifiers],
+                                                    phase: Default::default(),
                                                 };
                                                 new_items.push(ModuleItem::ModuleDecl(
                                                     ModuleDecl::Import(import),
@@ -71,6 +72,7 @@ impl Fold for NamedImportTransform {
                                                     type_only: false,
                                                     with: None,
                                                     specifiers: vec![specifiers],
+                                                    phase: Default::default(),
                                                 };
                                                 new_items.push(ModuleItem::ModuleDecl(
                                                     ModuleDecl::Import(import),
@@ -94,6 +96,7 @@ impl Fold for NamedImportTransform {
                                             type_only: false,
                                             with: None,
                                             specifiers: vec![specifiers],
+                                            phase: Default::default(),
                                         };
                                         new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(
                                             import,
