@@ -1,5 +1,5 @@
 import Debug from 'debug'
-import EnhancedResolve from 'enhanced-resolve'
+import { ResolverFactory } from 'oxc-resolver'
 import { getQuery } from 'ufo'
 
 import { BARREL_MODULE_RE, POST_FIX_RE } from './constants'
@@ -24,16 +24,12 @@ export function parseUrl(url: string): BarrelParams {
 }
 
 export const resolver = async (id: string, context: string): Promise<string> => {
-  const _resolver = EnhancedResolve.create({
+  const _resolver = new ResolverFactory({
     extensions: ['.mjs', '.js', '.ts', '.tsx'],
     // see more options below,
     mainFields: ['module'],
   })
-  return new Promise((resolve) => {
-    _resolver(context, id, (_error, result) => {
-      resolve(result as string)
-    })
-  })
+  return (await _resolver.async(context, id))?.path ?? ''
 }
 
 export const isBarrelModule = (id: string) => {
