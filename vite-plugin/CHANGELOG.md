@@ -1,5 +1,18 @@
 # vite-plugin-barrel
 
+## 0.2.0
+
+### Minor Changes
+
+- 1235286: @swc/core@1.6.7
+
+### Patch Changes
+
+- 1235286: intergration with @vitejs/plugin-react-swc
+- 1235286: oxc_resolver for better perf
+- Updated dependencies [1235286]
+  - swc-plugin-barrel@0.1.0
+
 ## 0.1.1
 
 ### Patch Changes
