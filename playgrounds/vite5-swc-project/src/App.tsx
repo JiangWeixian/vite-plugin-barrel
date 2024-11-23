@@ -5,8 +5,10 @@ import { Button, IconButton } from '@mui/material'
 import { useState } from 'react'
 
 import viteLogo from '/vite.svg'
+import { version } from '../package.json'
 import reactLogo from './assets/react.svg'
 
+self.version = version
 console.log(AccessAlarm)
 console.log(Button, IconButton)
 function App() {
