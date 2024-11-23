@@ -1,5 +1,11 @@
 # vite-plugin-barrel
 
+## 0.2.1
+
+### Patch Changes
+
+- 459a73e: Barrel should skip non-script files
+
 ## 0.2.0
 
 ### Minor Changes
