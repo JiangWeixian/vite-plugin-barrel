@@ -1,5 +1,11 @@
 # swc-plugin-barrel
 
+## 0.2.0
+
+### Minor Changes
+
+- b40d800: unpin @swc/core version
+
 ## 0.1.0
 
 ### Minor Changes

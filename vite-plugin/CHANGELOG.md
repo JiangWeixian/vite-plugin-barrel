@@ -1,5 +1,16 @@
 # vite-plugin-barrel
 
+## 0.3.0
+
+### Minor Changes
+
+- b40d800: unpin @swc/core version
+
+### Patch Changes
+
+- Updated dependencies [b40d800]
+  - swc-plugin-barrel@0.2.0
+
 ## 0.2.1
 
 ### Patch Changes
