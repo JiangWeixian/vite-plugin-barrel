@@ -43,7 +43,7 @@
     "vite": "^5"
   },
   "dependencies": {
-    "@swc/core": "1.6.7",
+    "@swc/core": "^1.6.7",
     "debug": "^4.3.4",
     "oxc-resolver": "1.9.3",
     "swc-plugin-barrel": "workspace:*"
