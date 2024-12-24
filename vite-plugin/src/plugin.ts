@@ -28,7 +28,7 @@ interface SwcPluginBarrelOptions {
   packages?: string[]
 }
 
-export const swc_plugin_barrel = ({ packages }: Pick<SwcPluginBarrelOptions, 'packages'> = { packages: [] }) => {
+export const swc_plugin_barrel = ({ packages }: Pick<SwcPluginBarrelOptions, 'packages'> = { packages: [] }): [string, Record<string, any>] => {
   return [
     require.resolve('swc-plugin-barrel'),
     {
