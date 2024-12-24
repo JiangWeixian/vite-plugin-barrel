@@ -11,6 +11,10 @@ Some packages exports lots of modules, it will cause vite transform lots of file
 
 Test on `Apple M1 Pro`, with this plugin, it improve 50%+ build performance.
 
+> [!NOTE]  
+> According to [swc-docs](https://swc.rs/docs/plugin/selecting-swc-core), you should select right `@swc/core` version.
+> - `vite-plugin-barrel@0.2.0 ~ 0.3.0` and `swc-plugin-barrel@0.1.0 ~ 0.2.0` with `^@swc/core@1.6.x`
+
 ## install
 
 ```console
@@ -79,10 +83,9 @@ export default defineConfig({
 
 [next.js optimize_barrel](https://nextjs.org/docs/app/api-reference/next-config-js/optimizePackageImports)
 
-# 
+#
 <div align='right'>
 
 *built with ❤️ by 😼*
 
 </div>
-
