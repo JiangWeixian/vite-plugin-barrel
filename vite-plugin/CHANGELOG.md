@@ -1,5 +1,11 @@
 # vite-plugin-barrel
 
+## 0.3.1
+
+### Patch Changes
+
+- 8eff362: fix swc_plugin_barrel types
+
 ## 0.3.0
 
 ### Minor Changes
