@@ -15,6 +15,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.4.1",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
     "@types/react": "^18.2.56",
