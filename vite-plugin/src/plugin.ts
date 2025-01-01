@@ -57,6 +57,7 @@ const transformSWC = async (
     jsc: {
       target: 'es2021',
       experimental: {
+        cacheRoot: 'node_modules/.cache/swc',
         plugins: [
           [
             require.resolve('swc-plugin-barrel'),
