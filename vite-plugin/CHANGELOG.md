@@ -1,5 +1,16 @@
 # vite-plugin-barrel
 
+## 0.4.0
+
+### Minor Changes
+
+- 3482c6b: compat with 1.7.26
+
+### Patch Changes
+
+- Updated dependencies [3482c6b]
+  - swc-plugin-barrel@0.3.0
+
 ## 0.3.1
 
 ### Patch Changes
