@@ -12,8 +12,9 @@ Some packages exports lots of modules, it will cause vite transform lots of file
 Test on `Apple M1 Pro`, with this plugin, it improve 50%+ build performance.
 
 > [!NOTE]  
-> According to [swc-docs](https://swc.rs/docs/plugin/selecting-swc-core), you should select right `@swc/core` version.
-> - `vite-plugin-barrel@0.2.x ~ 0.3.x` and `swc-plugin-barrel@0.1.x ~ 0.2.x` with `@swc/core@1.6.x`
+> According to [swc_compat_range_docs](https://plugins.swc.rs/versions/range/94), you should select right `@swc/core` version.
+> - `vite-plugin-barrel@0.2.x ~ 0.3.x` and `swc-plugin-barrel@0.1.x ~ 0.2.x` use `swc_core@0.96.x` compat with `1.6.x`
+> - `vite-plugin-barrel@0.4.x` and `swc-plugin-barrel@0.3.x` use `swc_core@0.105.0` compat with `v1.7.0-v1.7.27`
 
 ## install
 
