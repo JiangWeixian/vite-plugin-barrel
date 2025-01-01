@@ -129,7 +129,7 @@ impl Fold for Barrel {
             }
         }
         // The second pass to rebuild the module items.
-        let mut new_items = vec![];
+        let mut new_items: Vec<ModuleItem> = vec![];
 
         // Exported meta information.
         let mut export_map = vec![];
@@ -288,6 +288,7 @@ impl Fold for Barrel {
             new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(ExportDecl {
                 span: DUMMY_SP,
                 decl: Decl::Var(Box::new(VarDecl {
+                    ctxt: Default::default(),
                     span: DUMMY_SP,
                     kind: VarDeclKind::Const,
                     declare: false,
@@ -298,6 +299,7 @@ impl Fold for Barrel {
                                 span: DUMMY_SP,
                                 sym: "__next_private_exports_map__".into(),
                                 optional: false,
+                                ctxt: Default::default(),
                             },
                             type_ann: None,
                         }),

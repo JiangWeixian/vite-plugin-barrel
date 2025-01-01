@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use swc_core::ecma::transforms::testing::test_fixture;
+use swc_core::ecma::visit::fold_pass;
 use testing::fixture;
 
 use swc_plugin_barrel::swc_barrel::{barrel, Config};
@@ -17,7 +18,7 @@ fn fixture(input: PathBuf) {
 
     test_fixture(
         Default::default(),
-        &|_| barrel(&Config { wildcard: false }),
+        &|_| fold_pass(barrel(&Config { wildcard: false })),
         &input,
         &output,
         Default::default(),
@@ -33,9 +34,9 @@ fn fixture_transform_named_imports(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            named_import_transform(NamedImportTransformConfig {
+            fold_pass(named_import_transform(NamedImportTransformConfig {
                 packages: vec![package.clone()],
-            })
+            }))
         },
         &input,
         &output,
@@ -50,9 +51,9 @@ fn fixture_transform_relative_imports(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relative_import_transform(&RelativeTransformImportsConfig {
+            fold_pass(relative_import_transform(&RelativeTransformImportsConfig {
                 enable: true,
-            })
+            }))
         },
         &input,
         &output,
@@ -67,9 +68,9 @@ fn fixture_disable_transform_relative_imports(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relative_import_transform(&RelativeTransformImportsConfig {
+            fold_pass(relative_import_transform(&RelativeTransformImportsConfig {
                 enable: false,
-            })
+            }))
         },
         &input,
         &output,
