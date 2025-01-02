@@ -1,5 +1,11 @@
 # vite-plugin-barrel
 
+## 0.4.1
+
+### Patch Changes
+
+- 5795401: config default cacheroot to node_modules/.cache
+
 ## 0.4.0
 
 ### Minor Changes
